@@ -47,3 +47,4 @@ https://PruebaDevLoymark.github.io/
 
 
 ## Use this space to share bugs you’ve identified but didn’t have time to fix.
+- some holidays seems to not being rendered properly when the start day is greater than 1
