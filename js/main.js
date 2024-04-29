@@ -22,14 +22,18 @@ const validations = {
 	},
 	daysLength: function(value) {
 		return value.match(/^([1-9][0-9]{0,2})$/);
-	}
+	},
+	countryCode: function (value) {
+        return value.match(/^[a-zA-Z]{2}$/); // Match exactly 2 letters
+    }
 };
 
 // Validation error messages
 var messages = {
 	required: 'Required field',
 	dateFormat: 'Invalid date format. Please use mm/dd/yyyy',
-	daysLength: 'Use only numeric chacters between 1 and 999.'
+	daysLength: 'Use only numeric chacters between 1 and 999.',
+	countryCode: 'Please enter a valid 2-letter country code.'
 }
 
 
