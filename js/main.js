@@ -189,6 +189,9 @@ function makeCalendar(dateStart, dateLength) {
 	// Remove loading class after all days/months are rendered
 	window.setTimeout(function() {
 		cal.parentNode.classList.remove('loading');
+		// Update button text to "Update Calendar" after the calendar has rendered
+		const updateButton = document.querySelector('.btn-blue');
+		updateButton.textContent = 'Update Calendar';
 	}, 1500);
 }
 
