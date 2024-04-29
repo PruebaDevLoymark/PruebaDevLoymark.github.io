@@ -47,9 +47,6 @@ var today = getTodayDate();
 var monthName = formatNames('month', useMonthShort);
 var dayName;
 
-
-
-
 /*
  *  Helpers
  */
@@ -99,14 +96,14 @@ function formatNames(type, useShort) {
 }
 
 // Make calendar
-function makeCalendar(dateStart, dateLength) {
+function makeCalendar(dateStart, dateLength, countryCode) {
 	// Parse dateLength value just to make sure we work with an integer
 	dateLength = parseInt(dateLength);
 
 	// Split date to ensure expected formatting (dd/mm/yyyy)
 	var params = dateStart.split('/'),
 		startDay = parseInt(params[1]),
-		startMonth = parseInt(params[0] - 2),
+		startMonth = parseInt(params[0] - 1),
 		startYear = parseInt(params[2]),
 		formatted = startYear + '/' + startMonth + '/' + startDay;
 
@@ -190,6 +187,7 @@ function makeCalendar(dateStart, dateLength) {
 		tempCount++;
 	}
 
+	markHolidays(tempYear, countryCode)
 	// Remove loading class after all days/months are rendered
 	window.setTimeout(function() {
 		cal.parentNode.classList.remove('loading');
@@ -294,6 +292,42 @@ function fillEmptyMonth(year, month, start, length) {
 	}
 }
 
+// Determine which JSON file to use based on selected country code
+function getHolidayJSON(countryCode) {
+    const countryPaths = {
+        us: 'holidays/us.json',
+        cr: 'holidays/cr.json',
+        int: 'holidays/int.json',
+    };
+
+    const path = countryPaths[countryCode.toLowerCase()] || countryPaths['int']; // Use international JSON as default
+    return fetch(path)
+        .then(response => response.json())
+}
+
+// Mark holidays
+function markHolidays(year, countryCode) {
+    getHolidayJSON(countryCode)
+        .then(holidays => {
+            for (const holidayDate in holidays) {				
+                const [holidayDay, holidayMonth] = holidayDate.split('/');
+                const $month = document.getElementById(monthName[parseInt(holidayMonth)] + "_" + year);
+
+                if (!$month) continue; // Month not found, skip to next iteration
+
+                if (parseInt(holidayDay) <= $month.children.length) {
+                    const $day_cell = $month.children[holidayDay - 1];
+                    if ($day_cell) {
+                        $day_cell.classList.add("holiday");
+                        $day_cell.addEventListener('click', function () {
+                            alert('Holiday: ' + holidays[holidayDate][0].name);
+                        });
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching holidays:', error));
+}
 
 // Validate form data and submit
 function validateForm() {
@@ -365,7 +399,7 @@ function validateForm() {
 			}
 
 			cal.scrollTop = 0;
-			makeCalendar(inputArray[0].value, inputArray[1].value);
+			makeCalendar(inputArray[0].value, inputArray[1].value, inputArray[2].value);
 		}
 
 	}, false);

@@ -124,3 +124,7 @@
     background-color: #444444 !important; /* HEX color for today's date */
 	color: #999;
 }
+
+.holiday {
+    background-color: #3d9438 !important;  /* HEX color for holidays */
+}
