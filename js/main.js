@@ -309,18 +309,20 @@ function getHolidayJSON(countryCode) {
 function markHolidays(year, countryCode) {
     getHolidayJSON(countryCode)
         .then(holidays => {
-            for (const holidayDate in holidays) {                
+            for (const holidayDate in holidays) {
                 const [holidayDay, holidayMonth] = holidayDate.split('/');
                 const monthIndex = parseInt(holidayMonth);
-
                 const $month = document.getElementById(monthName[monthIndex] + "_" + year);
 
                 if (!$month) continue; // Month not found, skip to next iteration
 
-                const $validDayCells = Array.from($month.children).filter($day_cell => !$day_cell.querySelector('span').classList.contains("empty"));
-								
-                if (parseInt(holidayDay) <= $validDayCells.length) {
-                    const $day_cell = $validDayCells[holidayDay - 1];
+                const $validDayCells = Array.from($month.children).filter($day_cell => {
+                    const $span = $day_cell.querySelector('span');
+                    return !$span.classList.contains("empty") && $span.innerText === holidayDay;
+                });
+
+                if ($validDayCells.length > 0) {
+                    const $day_cell = $validDayCells[0];
                     $day_cell.classList.add("holiday");
                     $day_cell.addEventListener('click', function () {
                         alert('Holiday: ' + holidays[holidayDate][0].name);
